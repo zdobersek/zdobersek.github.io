@@ -1,0 +1,108 @@
+<html>
+<head>
+<style>
+.object-report {
+    width: 90%;
+    padding: 8px;
+    margin: 20px auto;
+    //background-color: #dadada;
+    border: 2px solid black;
+    border-radius: 3px;
+}
+
+.descriptor-report {
+    width: 90%;
+    padding: 4px;
+    margin: 10px auto;
+    //background-color: #e5e5e5;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+.name {
+    display: inline;
+    font-weight: bold;
+}
+
+.descriptor-entries {
+    float: right;
+    display: inline;
+    margin: auto 0px;
+}
+
+.descriptor-entry {
+    display: inline;
+    margin: 0px 30px;
+}
+</style>
+<script>
+function executeTest()
+{
+    var objects = [
+        window.performance.__proto__,
+    ];
+
+    objects.forEach(function(obj) {
+        reportObject(obj);
+    });
+}
+
+function reportObject(obj)
+{
+    var objectDiv = document.createElement("div");
+    objectDiv.className = "object-report";
+
+    var objectNameDiv = document.createElement("div");
+    objectNameDiv.className = "name";
+    objectNameDiv.innerText = obj.toString();
+    objectDiv.appendChild(objectNameDiv);
+
+    Object.getOwnPropertyNames(obj).forEach(function(prop) {
+        reportDescriptor(obj, prop, objectDiv);
+    });
+
+    document.body.appendChild(objectDiv);
+}
+
+function reportDescriptor(obj, prop, objectDiv)
+{
+    var descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+    var descriptorDiv = document.createElement("div");
+    descriptorDiv.className = "descriptor-report";
+
+    var descriptorNameDiv = document.createElement("div");
+    descriptorNameDiv.className = "name";
+    descriptorNameDiv.innerText = prop.toString();
+    descriptorDiv.appendChild(descriptorNameDiv);
+
+    var descriptorEntriesDiv = document.createElement("div");
+    descriptorEntriesDiv.className = "descriptor-entries";
+    descriptorDiv.appendChild(descriptorEntriesDiv);
+
+    appendDescriptorEntry(descriptor, "writable", descriptorEntriesDiv);
+    appendDescriptorEntry(descriptor, "enumerable", descriptorEntriesDiv);
+    appendDescriptorEntry(descriptor, "configurable", descriptorEntriesDiv);
+
+    objectDiv.appendChild(descriptorDiv);
+    console.log(Object.getOwnPropertyDescriptor(obj, prop));
+}
+
+function appendDescriptorEntry(descriptor, key, descriptorEntriesDiv)
+{
+    var descriptorEntryDiv = document.createElement("div");
+    descriptorEntryDiv.className = "descriptor-entry";
+    descriptorEntryDiv.innerHTML = descriptorEntryHTML(descriptor, key);
+    descriptorEntriesDiv.appendChild(descriptorEntryDiv);
+}
+
+function descriptorEntryHTML(descriptor, key)
+{
+    if (!(key in descriptor))
+        return key + " - ??";
+    return key + " - " + (descriptor[key] === true ? "&#x2714;" : "&#x2718;");
+}
+</script>
+</head>
+<body onload="executeTest()">
+</body>
+</html>
